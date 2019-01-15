@@ -1,11 +1,11 @@
-命令 whatis info man which whereis
+# 命令 whatis info man which whereis
 
 * 在只记得部分命令关键字的场合，我们可通过 man -k 来搜索；
 * 需要知道某个命令的简要说明，可以使用 whatis；而更详细的介绍，则可用 info 命令；whatis 等同于 man -f；
 * 查看命令在哪个位置，我们需要使用 which；
 * 而对于命令的具体参数及使用方法，我们需要用到强大的 man；
 
-man 详解：
+## man 详解：
 
 * 语法
 * 
