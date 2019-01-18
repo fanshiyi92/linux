@@ -54,6 +54,10 @@ diff file1 file2
 egrep '03.1\/CO\/AE' TSF_STAT_111130.log.012
 egrep 'A_LMCA777:C' TSF_STAT_111130.log.035 > co.out2
 ```
+查找 record.log 中包含 AAA，但不包含 BBB 的记录的总数:
+```
+cat -v record.log | grep AAA | grep -v BBB | wc -l
+```
 
 ## 文件与目录权限修改 chown/chmod
 
@@ -154,4 +158,99 @@ command > file 2>&1
 command >> file 2>&1
 ```
 
+## Bash 快捷输入或删除
 
+```
+Ctl-U   删除光标到行首的所有字符,在某些设置下,删除全行
+Ctl-W   删除当前光标到前边的最近一个空格之间的字符
+Ctl-H   backspace,删除光标前边的字符
+Ctl-R   匹配最相近的一个文件，然后输出
+```
+
+## 查看磁盘空间
+
+查看磁盘空间利用大小:
+```
+df -h
+```
+查看当前目录所占空间大小:
+```
+du -sh
+```
+* -h 人性化显示（即带单位：比如 M/G，如果不加这个参数，显示的数字以 Byte 为单位）
+* -s 递归整个目录的大小
+
+## 打包/压缩
+
+```
+tar -cvf etc.tar /etc 仅打包，不压缩！
+gzip demo.txt 压缩，生成 .gz
+gunzip   demo.tar.gz 解压
+tar -xvf demo.tar  解压
+```
+
+## 查询进程
+
+```
+ps -ef
+```
+显示进程信息，并实时更新
+[top 详解 ](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/top.html#top)
+```
+top
+```
+losf 详解
+```
+-a：列出打开文件存在的进程；
+-c<进程名>：列出指定进程所打开的文件；
+-g：列出 GID 号进程详情；
+-d<文件号>：列出占用该文件号的进程；
++d<目录>：列出目录下被打开的文件；
++D<目录>：递归列出目录下被打开的文件；
+-n<目录>：列出使用 NFS 的文件；
+-i<条件>：列出符合条件的进程。（4、6、协议、:端口、@ip ）
+-p<进程号>：列出指定进程号所打开的文件；
+-u：列出 UID 号进程详情；
+-h：显示帮助信息；
+-v：显示版本信息。
+```
+实例：
+```
+lsof
+command     PID USER   FD      type             DEVICE     SIZE       NODE NAME
+init          1 root  cwd       DIR                8,2     4096          2 /
+init          1 root  rtd       DIR                8,2     4096          2 /
+init          1 root  txt       REG                8,2    43496    6121706 /sbin/init
+init          1 root  mem       REG                8,2   143600    7823908 /lib64/ld-2.5.
+...
+```
+lsof 输出各列信息的意义如下：
+
+* COMMAND：进程的名称
+* PID：进程标识符
+* PPID：父进程标识符（需要指定-R 参数）
+* USER：进程所有者
+* PGID：进程所属组
+* FD：文件描述符，应用程序通过文件描述符识别该文件。
+
+其他例子：
+
+查看端口占用的进程状态
+```
+lsof -i:3306
+```
+查看用户 username 的进程所打开的文件
+```
+lsof -u username
+```
+查询 init 进程当前打开的文件
+```
+lsof -c init
+```
+
+## 杀死相关进程 kill
+
+## sar 找出系统瓶颈的利器
+sar 是 System Activity Reporter（系统活动情况报告）的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从 14 个大方面对系统的活动进行报告，包括文件的读写情况、系统调用的使用情况、串口、CPU 效率、内存使用状况、进程活动及 IPC 有关的活动等，使用也是较为复杂。
+
+[sar 工具使用介绍 ](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/sar.html#sar)
