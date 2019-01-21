@@ -167,7 +167,7 @@ Ctl-H   backspace,删除光标前边的字符
 Ctl-R   匹配最相近的一个文件，然后输出
 ```
 
-## 查看磁盘空间
+## 查看磁盘空间 df/du
 
 查看磁盘空间利用大小:
 ```
@@ -180,7 +180,7 @@ du -sh
 * -h 人性化显示（即带单位：比如 M/G，如果不加这个参数，显示的数字以 Byte 为单位）
 * -s 递归整个目录的大小
 
-## 打包/压缩
+## 打包/压缩 tar/gzip
 
 ```
 tar -cvf etc.tar /etc 仅打包，不压缩！
@@ -189,7 +189,7 @@ gunzip   demo.tar.gz 解压
 tar -xvf demo.tar  解压
 ```
 
-## 查询进程
+## 查询进程 ps
 
 ```
 ps -ef
@@ -250,7 +250,159 @@ lsof -c init
 
 ## 杀死相关进程 kill
 
-## sar 找出系统瓶颈的利器
+## 找出系统瓶颈的利器 sar
+
 sar 是 System Activity Reporter（系统活动情况报告）的缩写。sar 工具将对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态。它的特点是可以连续对系统取样，获得大量的取样数据；取样数据和分析的结果都可以存入文件，所需的负载很小。sar 是目前 Linux 上最为全面的系统性能分析工具之一，可以从 14 个大方面对系统的活动进行报告，包括文件的读写情况、系统调用的使用情况、串口、CPU 效率、内存使用状况、进程活动及 IPC 有关的活动等，使用也是较为复杂。
 
 [sar 工具使用介绍 ](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/sar.html#sar)
+
+## 查询网络服务和端口 netstat 
+
+* 语法
+```
+netstat [-acCeFghilMnNoprstuvVwx][-A<网络类型>][--ip]
+```
+参数说明：
+```
+-a/–all 显示所有连线中的 Socket。
+-A<网络类型>/–<网络类型> 列出该网络类型连线中的相关地址。
+-c/–continuous 持续列出网络状态。
+-C/–cache 显示路由器配置的快取信息。
+-e/–extend 显示网络其他相关信息。
+-F/–fib 显示 FIB。
+-g/–groups 显示多重广播功能群组组员名单。
+-h/–help 在线帮助。
+-i/–interfaces 显示网络界面信息表单。
+-l/–listening 显示监控中的服务器的 Socket。
+-M/–masquerade 显示伪装的网络连线。
+-n/–numeric 直接使用 IP 地址，而不通过域名服务器。
+-N/–netlink/–symbolic 显示网络硬件外围设备的符号连接名称。
+-o/–timers 显示计时器。
+-p/–programs 显示正在使用 Socket 的程序识别码和程序名称。
+-r/–route 显示 Routing Table。
+-s/–statistice 显示网络工作信息统计表。
+-t/–tcp 显示 TCP 传输协议的连线状况。
+-u/–udp 显示 UDP 传输协议的连线状况。
+-v/–verbose 显示指令执行过程。
+-V/–version 显示版本信息。
+-w/–raw 显示 RAW 传输协议的连线状况。
+-x/–unix 此参数的效果和指定”-A unix”参数相同。
+–ip/–inet 此参数的效果和指定”-A inet”参数相同。
+```
+例子：
+```
+netstat -antp | grep 6379
+```
+
+## ftp sftp lftp ssh
+
+ssh 登陆远程服务器 host，ID 为用户名
+
+```
+ssh ID@host
+```
+
+ftp/sftp 文件传输：
+
+```
+sftp ID@host
+```
+
+sftp登陆后，可以使用下面的命令进一步操作：
+
+```
+get filename # 下载文件
+put filename # 上传文件
+ls # 列出 host 上当前路径的所有文件
+cd # 在 host 上更改当前路径
+lls # 列出本地主机上当前路径的所有文件
+lcd # 在本地主机更改当前路径
+```
+
+lftp同步文件夹(类似rsync工具):
+
+
+## 网络复制 scp
+
+将本地localpath指向的文件上传到远程主机的path路径:
+
+```
+scp localpath ID@host:path
+```
+
+## 环境变量
+
+bashrc 与 profile 都用于保存用户的环境信息，bashrc 用于交互式 non-loginshell，而 profile 用于交互式 login shell。
+
+/etc/profile，/etc/bashrc 是系统全局环境变量设定
+~/.profile，~/.bashrc 用户目录下的私有环境变量设定
+
+当登入系统获得一个 shell 进程时，其读取环境设置脚本分为三步:
+
+首先读入的是全局环境变量设置文件/etc/profile，然后根据其内容读取额外的文档，如/etc/profile.d 和/etc/inputrc
+读取当前登录用户 Home 目录下的文件~/.bash_profile，其次读取~/.bash_login，最后读取~/.profile，这三个文档设定基本上是一样的，读取有优先关系
+读取~/.bashrc
+~/.profile 与~/.bashrc 的区别:
+
+这两者都具有个性化定制功能
+~/.profile 可以设定本用户专有的路径，环境变量，等，它只能登入的时候执行一次
+~/.bashrc 也是某用户专有设定文档，可以设定路径，命令别名，每次 shell script 的执行都会使用它一次
+例如，我们可以在这些环境变量中设置自己经常进入的文件路径，以及命令的快捷方式：
+
+```
+.bashrc
+alias m='more'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ll='ls -l'
+alias lsl='ls -lrt'
+alias lm='ls -al|more'
+
+log=/opt/applog/common_dir
+
+.bash_profile
+. /opt/app/tuxapp/openav/config/setenv.prod.sh.linux
+export PS1='$PWD#'
+```
+通过上述设置，我们进入 log 目录就只需要输入`cd $log`即可；
+
+## 系统管理
+
+* 查看Linux系统版本
+```
+uname -a
+lsb_release -a
+```
+
+查看Unix系统版本：操作系统版本:
+```
+more /etc/release
+```
+
+查看CPU信息:
+```
+cat /proc/cpuinfo
+```
+
+查看CPU的核的个数:
+```
+cat /proc/cpuinfo | grep processor | wc -l
+```
+
+查看内存信息:
+```
+cat /proc/meminfo
+```
+
+显示架构:
+```
+arch
+```
+
+设置系统日期和时间(格式为2014-09-15 17:05:00):
+```
+date -s 2014-09-15 17:05:00
+```
+
+```
+```
